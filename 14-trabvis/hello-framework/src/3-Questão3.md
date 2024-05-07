@@ -29,17 +29,18 @@ const selection = view(Inputs.table(dataset,
         columns:[ 
             "artist(s)_name",
             "streams",
+            "released_year",
             "in_spotify_playlists",
             "in_apple_playlists",
             "in_deezer_playlists"
-                ],
+                ],/*
         header:{
             "artist(s)_name": "Nome do Artista",
             "streams": "Mais Ouvidos",
             "in_spotify_playlists": "Playlist do Spotify",
             "in_apple_playlists": "Playlist da Apple",
             "in_deezer_playlists": "Playlist da Deezer"
-                },
+                },*/
         sort: "streams", reverse: true
         }
     )
@@ -92,12 +93,67 @@ function ex01(divWidth) {
             data: {
                 values: spotify
             },
-            "mark": "bar",
-
-  }
-
+            "transform": [{
+                "filter":{ 
+                    "field": "in_spotify_playlists", 
+                    "range": [50, 100]},
+                }],
+            "mark": {
+                "type":"line",
+                "point":"true",
+                "clipe":"true"
+            },
+            "encoding":{
+                "x":{
+                    "aggregate":"average", 
+                    "timeUnit":"year", 
+                    "field":"released_year",
+                    "type":"temporal"
+                },
+                "y":{
+                    "aggregate":"average", 
+                    "field":"in_spotify_playlists", 
+                    "type":"quantitative"
+                },
+                "color": {"field": "artist(s)_name", "type": "nominal"},
+                "groupby": ["artist(s)_name"]
+            }
         }
-    };
+    }
+}
+
+function ex02(divWidth) {
+    return {
+        spec: {
+            width: divWidth,
+            data: {
+                values: spotify
+            },
+            "transform": [{
+                "filter":{ 
+                    "field": "in_spotify_playlists", 
+                    "range": [50, 100]},
+                }],
+            "mark": {
+                "type":"line",
+                "point":"true",
+                "clipe":"true"
+            },
+            "encoding":{
+                "x":{
+                    "timeUnit":"year", 
+                    "field":"released_year",
+                    "type":"temporal"
+                },
+                "y":{
+                    "aggregate":"mean", 
+                    "field":"in_spotify_playlists", 
+                    "type":"quantitative"
+                },
+                "color": {"field": "artist(s)_name", "type": "nominal"}
+            }
+        }
+    }
 }
 
 
